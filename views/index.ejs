@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= description %>">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description" content="<%= description %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <!-- Hero Slider -->
+  <section class="hero-slider" id="hero-slider">
+    <div class="slider-container">
+      <div class="slide active" style="background-image: url('/assets/hero-slide-1.jpg')">
+        <div class="slide-content">
+          <p class="slide-subtitle">Melt Away The Day. Keep The Walk Of Slay</p>
+          <h1 class="slide-title">Cukup yang esensial untuk kulit sehatmu. #IntinyaAjaCukup</h1>
+          <a href="/shop" class="btn btn-primary">SHOP NOW</a>
+        </div>
+      </div>
+      <div class="slide" style="background-image: url('/assets/hero-slide-2.webp')">
+        <div class="slide-content">
+          <p class="slide-subtitle">Melt Away The Day. Keep The Walk Of Slay</p>
+          <h1 class="slide-title">Baru! 1st Cleanser 'Serum-Infused' yang gak bikin kulit ketarik.</h1>
+          <a href="/shop" class="btn btn-primary">SHOP NEW ARRIVAL</a>
+        </div>
+      </div>
+    </div>
+    <button class="slider-btn slider-prev" id="slider-prev" aria-label="Previous">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="slider-btn slider-next" id="slider-next" aria-label="Next">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </section>
+
+  <!-- Trust Badges Ticker -->
+  <section class="trust-badges">
+    <div class="trust-ticker">
+      <div class="trust-ticker-content">
+        <span class="badge-item">Non-Comedogenic</span>
+        <span class="badge-item">Dermatologically Tested</span>
+        <span class="badge-item">Halal Certified</span>
+        <span class="badge-item">BPOM Certified</span>
+        <span class="badge-item">Sensitive Skin Friendly</span>
+        <span class="badge-item">All Skin Type</span>
+        <span class="badge-item">Non-Comedogenic</span>
+        <span class="badge-item">Dermatologically Tested</span>
+        <span class="badge-item">Halal Certified</span>
+        <span class="badge-item">BPOM Certified</span>
+        <span class="badge-item">Sensitive Skin Friendly</span>
+        <span class="badge-item">All Skin Type</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Most Loved Formula -->
+  <section class="section best-sellers-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Our Most Loved Formula</h2>
+        <p class="section-subtitle">Only the best seller products added recently in our catalog</p>
+      </div>
+      <div class="product-grid">
+        <% products.filter(p => p.bestSeller).forEach(product => { %>
+        <div class="product-card" id="product-<%= product.id %>">
+          <a href="/product/<%= product.slug %>" class="product-image-link">
+            <% if (product.discount) { %>
+            <span class="product-badge">-<%= product.discount %>%</span>
+            <% } %>
+            <img src="<%= product.image %>" alt="<%= product.name %>" class="product-img primary-img" loading="lazy">
+            <img src="<%= product.hoverImage %>" alt="<%= product.name %> texture" class="product-img hover-img" loading="lazy">
+          </a>
+          <div class="product-info">
+            <div class="product-category">
+              <%= product.category.join(', ').toUpperCase() %>
+            </div>
+            <h3 class="product-name">
+              <a href="/product/<%= product.slug %>"><%= product.name %></a>
+            </h3>
+            <div class="product-rating">
+              <% for(let i = 0; i < 5; i++) { %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="<%= i < product.rating ? '#333' : 'none' %>" stroke="#333" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <% } %>
+            </div>
+            <div class="product-price">
+              <% if (product.salePrice) { %>
+              <span class="price-original"><%= formatPrice(product.price) %></span>
+              <span class="price-sale"><%= formatPrice(product.salePrice) %></span>
+              <% } else { %>
+              <span class="price-regular"><%= formatPrice(product.price) %></span>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Categories / Shop By Type -->
+  <section class="section product-categories-section">
+    <div class="container">
+      <div class="filter-tabs">
+        <a href="/shop" class="filter-tab active">Shop All</a>
+        <a href="/shop?category=moisturizer" class="filter-tab">Moisturizer</a>
+        <a href="/shop?category=serum" class="filter-tab">HPR Serum</a>
+        <a href="/shop?category=cleansing" class="filter-tab">Cleansing</a>
+        <a href="/shop?category=sunscreen" class="filter-tab">SPF</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Grid -->
+  <section class="section category-grid-section">
+    <div class="container">
+      <div class="category-grid">
+        <% categories.forEach(cat => { %>
+        <a href="/shop?category=<%= cat.slug %>" class="category-card" id="cat-<%= cat.slug %>">
+          <div class="category-image">
+            <img src="<%= cat.image %>" alt="<%= cat.name %>" loading="lazy">
+          </div>
+          <h3 class="category-name"><%= cat.name.toUpperCase() %></h3>
+          <span class="category-cta">SHOP NOW</span>
+        </a>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Story -->
+  <section class="section brand-story-section">
+    <div class="brand-story-grid">
+      <div class="brand-story-image">
+        <img src="/assets/brand-story.jpg" alt="Plan Your Skin products lineup" loading="lazy">
+      </div>
+      <div class="brand-story-content">
+        <h2 class="brand-story-title">Skincare Shouldn't be Complicated.</h2>
+        <p class="brand-story-text">Healthy skin comes from consistency not complexity. We focus on high performance essentials that truly work. #IntinyaAjaCukup.</p>
+        <a href="/about-us" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+  <%- include('partials/whatsapp') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "All At Once Water Cream",
+      "slug": "all-at-once-water-cream",
+      "category": ["Moisturizer", "Skincare"],
+      "price": 259000,
+      "salePrice": 108780,
+      "discount": 58,
+      "image": "/assets/product-wc.jpg",
+      "hoverImage": "/assets/texture-wc.webp",
+      "description": "Lightweight water-cream moisturizer yang memberikan hidrasi optimal tanpa rasa berat. Cocok untuk semua jenis kulit.",
+      "rating": 5,
+      "concerns": ["Sensitive Skin", "Acne Prone"],
+      "ingredients": ["Niacinamide", "Hydration Complex"],
+      "bestSeller": true
+    },
+    {
+      "id": 2,
+      "name": "All At Once Gel Moisturizer",
+      "slug": "all-at-once-gel-moisturizer",
+      "category": ["Moisturizer", "Skincare"],
+      "price": 259000,
+      "salePrice": 108780,
+      "discount": 58,
+      "image": "/assets/product-gm.jpg",
+      "hoverImage": "/assets/texture-gm.webp",
+      "description": "Gel moisturizer ringan yang melembapkan kulit secara intensif. Formula non-comedogenic cocok untuk kulit berminyak.",
+      "rating": 5,
+      "concerns": ["Large Pores", "Acne Prone"],
+      "ingredients": ["Niacinamide", "Hydration Complex"],
+      "bestSeller": true
+    },
+    {
+      "id": 3,
+      "name": "All Night HPR Retinoate Repair Serum",
+      "slug": "all-night-hpr-retinoate-repair-serum",
+      "category": ["Serums", "Skincare"],
+      "price": 279000,
+      "salePrice": 114390,
+      "discount": 59,
+      "image": "/assets/product-hpr.jpg",
+      "hoverImage": "/assets/texture-hpr.webp",
+      "description": "Serum malam dengan HPR Retinoate untuk regenerasi kulit saat tidur. Membantu mengurangi tanda-tanda penuaan.",
+      "rating": 5,
+      "concerns": ["Blemish", "PIH", "PIE"],
+      "ingredients": ["HPR Retinoate"],
+      "bestSeller": true
+    },
+    {
+      "id": 4,
+      "name": "UV Protector Hybrid Sun Cream with Niacinamide",
+      "slug": "uv-protector-hybrid-sun-cream",
+      "category": ["Sunscreen", "Skincare"],
+      "price": 279000,
+      "salePrice": 114390,
+      "discount": 59,
+      "image": "/assets/product-spf.jpg",
+      "hoverImage": "/assets/texture-spf.webp",
+      "description": "Hybrid sunscreen SPF 50 PA++++ dengan Niacinamide. Perlindungan UV optimal sekaligus mencerahkan kulit.",
+      "rating": 5,
+      "concerns": ["Sensitive Skin", "Acne Prone"],
+      "ingredients": ["Niacinamide"],
+      "bestSeller": true
+    },
+    {
+      "id": 5,
+      "name": "Cleansing Me Gently Cleansing Serum",
+      "slug": "cleansing-me-gently-cleansing-serum",
+      "category": ["Cleansing Serum", "Skincare"],
+      "price": 259000,
+      "salePrice": 108780,
+      "discount": 58,
+      "image": "/assets/product-cs.jpg",
+      "hoverImage": "/assets/product-cs.jpg",
+      "description": "1st Cleanser serum-infused yang membersihkan wajah tanpa membuat kulit ketarik. Lembut untuk kulit sensitif.",
+      "rating": 5,
+      "concerns": ["Sensitive Skin"],
+      "ingredients": ["Glycerin"],
+      "bestSeller": true
+    }
+  ],
+  "bundles": [
+    {
+      "id": 101,
+      "name": "Daily Hustler Bundle",
+      "slug": "daily-hustler-bundle",
+      "image": "/assets/cat-bundles.webp",
+      "description": "Bundling SPF + Gel Moisturizer untuk aktivitas harian"
+    },
+    {
+      "id": 102,
+      "name": "Plan Your Skin 4-in-1 Daily Perfection",
+      "slug": "4-in-1-daily-perfection",
+      "image": "/assets/cat-essentials.webp",
+      "description": "HPR Retinoate Serum + Gel + Water Cream + Hybrid Sunscreen SPF 50"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Brightening Heroes",
+      "slug": "brightening-heroes",
+      "image": "/assets/cat-brightening.webp"
+    },
+    {
+      "name": "Value Bundles",
+      "slug": "value-bundles",
+      "image": "/assets/cat-bundles.webp"
+    },
+    {
+      "name": "The Essentials Kit",
+      "slug": "the-essentials-kit",
+      "image": "/assets/cat-essentials.webp"
+    },
+    {
+      "name": "Slow Aging Series",
+      "slug": "slow-aging-series",
+      "image": "/assets/cat-slowaging.webp"
+    }
+  ]
+}

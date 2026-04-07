@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <section class="section error-section">
+    <div class="container" style="text-align:center; padding: 120px 20px;">
+      <h1 style="font-size: 72px; font-weight: 700; margin-bottom: 16px;">404</h1>
+      <p style="font-size: 18px; color: #666; margin-bottom: 32px;">Page not found</p>
+      <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+  </section>
+  <%- include('partials/footer') %>
+  <%- include('partials/whatsapp') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

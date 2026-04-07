@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= description %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+<section class="page-header" style="border-bottom: none; padding-bottom: 0;">
+  <div class="container" style="text-align: center;">
+    <div class="cart-steps" style="font-size: 16px; font-weight: 700; color: #333;">
+      <span>Shopping Cart</span> <span style="margin: 0 10px; color: #ccc;">&gt;</span>
+      <span style="color: #ccc;">Checkout</span> <span style="margin: 0 10px; color: #ccc;">&gt;</span>
+      <span style="color: #ccc;">Order Complete</span>
+    </div>
+  </div>
+</section>
+
+<section class="section cart-section" style="padding-top: 40px; min-height: 50vh;">
+  <div class="container">
+    <div id="cart-loading" class="cart-empty" style="text-align:center; padding: 40px 0;">
+      <p>Loading cart...</p>
+    </div>
+
+    <div id="cart-empty" class="cart-empty" style="display:none; flex-direction:column; align-items:center; justify-content:center; padding: 60px 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
+      <h2>Your cart is empty</h2>
+      <p style="color: var(--color-gray); margin-top: 8px;">Looks like you haven't added anything yet.</p>
+      <a href="/shop" class="btn btn-primary" style="margin-top: 24px;">CONTINUE SHOPPING</a>
+    </div>
+
+    <div id="cart-content" style="display:none;">
+      <div class="cart-page-layout">
+        <!-- Left Column: Items -->
+        <div class="cart-items-column">
+          <div class="cart-items-table">
+            <div class="cart-items-thead">
+              <div class="cth-product">PRODUCT</div>
+              <div class="cth-price">PRICE</div>
+              <div class="cth-qty">QUANTITY</div>
+              <div class="cth-subtotal">SUBTOTAL</div>
+            </div>
+            <div id="cart-items"></div>
+          </div>
+          <div class="cart-items-actions">
+            <div class="coupon-box">
+              <input type="text" placeholder="Coupon code" class="coupon-input">
+              <button class="btn btn-primary coupon-btn">APPLY COUPON</button>
+            </div>
+            <button class="btn btn-primary update-cart-btn" onclick="window.location.reload();">UPDATE CART</button>
+          </div>
+        </div>
+
+        <!-- Right Column: Totals -->
+        <div class="cart-totals-column">
+          <div class="cart-totals-box">
+            <h2>CART TOTALS</h2>
+            <div class="cart-totals-row">
+              <span>Subtotal</span>
+              <span id="cart-subtotal">Rp0</span>
+            </div>
+            <div class="cart-totals-row">
+              <span>Biaya Layanan</span>
+              <span>Rp2.500</span>
+            </div>
+            <div class="cart-totals-row cart-totals-final">
+              <span>Total</span>
+              <span id="cart-total">Rp0</span>
+            </div>
+            <a href="#" id="checkout-btn" class="btn btn-primary btn-checkout-proceed">PROCEED TO CHECKOUT &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/whatsapp') %>
+<script src="/js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const cartId = localStorage.getItem('shopify_cart_id');
+    const loadingEl = document.getElementById('cart-loading');
+    const emptyEl = document.getElementById('cart-empty');
+    const contentEl = document.getElementById('cart-content');
+    const itemsEl = document.getElementById('cart-items');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    checkoutBtn.href = '/checkout';
+
+    if (!cartId) {
+      loadingEl.style.display = 'none';
+      emptyEl.style.display = 'flex';
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/cart/${encodeURIComponent(cartId)}`);
+      const data = await response.json();
+      const cart = data.cart;
+
+      if (!cart || !cart.lines || cart.lines.edges.length === 0) {
+        loadingEl.style.display = 'none';
+        emptyEl.style.display = 'flex';
+        return;
+      }
+
+      // Set checkout URL
+      checkoutBtn.href = cart.checkoutUrl;
+
+      // Render cart items
+      let itemsHtml = '';
+      cart.lines.edges.forEach(({ node: line }) => {
+        const product = line.merchandise.product;
+        const variant = line.merchandise;
+        const price = parseFloat(variant.price.amount);
+        const total = price * line.quantity;
+        const title = product ? product.title : variant.title;
+        const imageUrl = (product && product.images && product.images.edges.length > 0) 
+            ? product.images.edges[0].node.url : '/assets/placeholder.svg';
+
+        itemsHtml += `
+          <div class="cart-items-row">
+            <div class="ctd-product">
+              <button class="cart-page-remove-btn" onclick="removeFromCart('${line.id}')">&times;</button>
+              <img src="${imageUrl}" alt="${title}" class="cart-page-item-img">
+              <div class="cart-page-item-name">${title}</div>
+            </div>
+            <div class="ctd-price">${formatPrice(price)}</div>
+            <div class="ctd-qty">
+              <div class="qty-control">
+                <button onclick="updateCartItem('${line.id}', ${line.quantity - 1})">-</button>
+                <input type="number" value="${line.quantity}" readonly>
+                <button onclick="updateCartItem('${line.id}', ${line.quantity + 1})">+</button>
+              </div>
+            </div>
+            <div class="ctd-subtotal">${formatPrice(total)}</div>
+          </div>
+        `;
+      });
+
+      itemsEl.innerHTML = itemsHtml;
+      
+      const subTotalCost = parseFloat(cart.cost.subtotalAmount.amount);
+      const fee = 2500;
+      const totalCost = subTotalCost + fee;
+      
+      subtotalEl.textContent = formatPrice(subTotalCost);
+      totalEl.textContent = formatPrice(totalCost);
+
+      // Update header cart count
+      const countEl = document.querySelector('.cart-count');
+      if (countEl) {
+        countEl.textContent = cart.totalQuantity || 0;
+        countEl.style.display = cart.totalQuantity > 0 ? 'flex' : 'none';
+      }
+
+      loadingEl.style.display = 'none';
+      contentEl.style.display = 'block';
+    } catch (error) {
+      console.error('Failed to load cart:', error);
+      loadingEl.style.display = 'none';
+      emptyEl.style.display = 'flex';
+    }
+  });
+
+  function formatPrice(price) {
+    return 'Rp' + Math.round(price).toLocaleString('id-ID');
+  }
+
+  window.updateCartItem = async function(lineId, quantity) {
+    if (quantity < 1) return removeFromCart(lineId);
+    try {
+      const cartId = localStorage.getItem('shopify_cart_id');
+      await fetch('/api/cart/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cartId, lineId, quantity })
+      });
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+      alert('Gagal update quantity');
+    }
+  };
+
+  window.removeFromCart = async function(lineId) {
+    if (!confirm('Hapus item ini dari keranjang?')) return;
+    try {
+      const cartId = localStorage.getItem('shopify_cart_id');
+      await fetch('/api/cart/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cartId, lineId })
+      });
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+      alert('Gagal menghapus item');
+    }
+  };
+</script>
+</body>
+</html>

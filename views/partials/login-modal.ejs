@@ -1,0 +1,91 @@
+<!-- Google Identity Services -->
+<% if (typeof googleClientId !== 'undefined' && googleClientId) { %>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<% } %>
+
+<!-- Login Modal Overlay -->
+<div class="login-modal-overlay" id="login-modal-overlay">
+  <div class="login-modal">
+    <button class="login-modal-close" id="login-modal-close" aria-label="Close modal">&times;</button>
+    <div class="login-modal-image" style="background-image: url('/assets/cat-brightening.jpg');">
+      <!-- Use brightening category image as placeholder since we don't have the exact blue background model image -->
+    </div>
+    
+    <!-- Login Form View -->
+    <div class="login-modal-content" id="login-view">
+      <h2 class="login-modal-title">Give your skin the best care.</h2>
+      <p class="login-modal-subtitle">Welcome back to your account, ready to glow?</p>
+      
+      <div id="login-error" style="color: red; font-size: 12px; margin-bottom: 15px; display: none;"></div>
+
+      <form id="auth-login-form">
+        <div class="login-form-group">
+          <input type="email" id="login-email" class="login-form-control" placeholder="Email Address" required>
+        </div>
+        <div class="login-form-group">
+          <input type="password" id="login-password" class="login-form-control" placeholder="Password" required>
+        </div>
+        
+        <a href="#" class="login-forgot-link">Forgot Password?</a>
+        
+        <button type="submit" class="btn-login" id="btn-login-submit">Sign in now</button>
+      </form>
+
+      <% if (typeof googleClientId !== 'undefined' && googleClientId && googleClientId !== 'your_google_client_id_here') { %>
+      <div class="login-separator">or sign in with google</div>
+      
+      <div id="g_id_onload"
+         data-client_id="<%= googleClientId %>"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="handleGoogleSignIn"
+         data-auto_prompt="false">
+      </div>
+
+      <div class="g_id_signin"
+         data-type="standard"
+         data-shape="rectangular"
+         data-theme="outline"
+         data-text="signin_with"
+         data-size="large"
+         data-logo_alignment="left"
+         style="margin-bottom: 32px; display: flex; justify-content: center;">
+      </div>
+      <% } else { %>
+        <div class="login-separator">Google Login Disabled (Need Client ID)</div>
+      <% } %>
+
+      <div class="login-modal-footer">
+        don't have an account? <a href="#" id="show-register">register</a>
+      </div>
+    </div>
+
+    <!-- Register Form View (Hidden by default) -->
+    <div class="login-modal-content" id="register-view" style="display: none;">
+      <h2 class="login-modal-title">Join the family.</h2>
+      <p class="login-modal-subtitle">Create an account and start your glowing journey.</p>
+      
+      <div id="register-error" style="color: red; font-size: 12px; margin-bottom: 15px; display: none;"></div>
+
+      <form id="auth-register-form">
+        <div class="login-form-group" style="display: flex; gap: 10px;">
+          <input type="text" id="reg-firstname" class="login-form-control" placeholder="First Name" required>
+          <input type="text" id="reg-lastname" class="login-form-control" placeholder="Last Name" required>
+        </div>
+        <div class="login-form-group">
+          <input type="email" id="reg-email" class="login-form-control" placeholder="Email Address" required>
+        </div>
+        <div class="login-form-group">
+          <input type="password" id="reg-password" class="login-form-control" placeholder="Password (min 5 chars)" required minlength="5">
+        </div>
+        
+        <button type="submit" class="btn-login" id="btn-register-submit" style="margin-top: 10px;">Create Account</button>
+      </form>
+
+      <div class="login-modal-footer">
+        already have an account? <a href="#" id="show-login">sign in</a>
+      </div>
+    </div>
+
+  </div>
+</div>

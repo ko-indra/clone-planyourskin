@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= description %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <!-- About Hero -->
+  <section class="about-hero">
+    <div class="container">
+      <h1 class="about-hero-title">About Us</h1>
+    </div>
+  </section>
+
+  <!-- About Content -->
+  <section class="section about-content-section">
+    <div class="container about-container">
+      <div class="about-block">
+        <h2 class="about-heading">Our Story</h2>
+        <p>Plan Your Skin lahir dari keyakinan bahwa merawat kulit secara efektif tidak perlu rumit. Di tengah tren 10-step routine yang terus berubah, kami kembali ke dasar: kulit yang sehat datang dari konsistensi, bukan kompleksitas.</p>
+        <p>Kami percaya bahwa setiap orang berhak memiliki kulit sehat tanpa harus bingung dengan banyaknya produk. Dengan tagline <strong>#IntinyaAjaCukup</strong>, Plan Your Skin menghadirkan rangkaian skincare esensial yang high-performance namun tetap simpel.</p>
+      </div>
+
+      <div class="about-block">
+        <h2 class="about-heading">Our Philosophy</h2>
+        <p>Skincare Shouldn't be Complicated. Kami fokus pada formula yang benar-benar bekerja dengan bahan aktif berkualitas tinggi.</p>
+        <div class="about-values">
+          <div class="value-card">
+            <div class="value-icon">🧪</div>
+            <h3>Dermatologically Tested</h3>
+            <p>Setiap produk telah melalui uji dermatologi untuk memastikan keamanan di semua jenis kulit.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🌿</div>
+            <h3>Non-Comedogenic</h3>
+            <p>Formula kami tidak menyumbat pori-pori, aman untuk kulit berjerawat sekalipun.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">☪️</div>
+            <h3>Halal Certified</h3>
+            <p>Semua produk Plan Your Skin telah tersertifikasi Halal untuk ketenangan Anda.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">✅</div>
+            <h3>BPOM Certified</h3>
+            <p>Terdaftar dan diawasi oleh BPOM RI untuk menjamin mutu dan keamanan produk.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-block">
+        <h2 class="about-heading">Our Products</h2>
+        <p>Setiap produk Plan Your Skin dirancang untuk memberikan hasil optimal dengan penggunaan rutin. Dari cleanser, serum, moisturizer, hingga sunscreen - semuanya bekerja secara sinergis untuk kulit sehat Anda.</p>
+        <a href="/shop" class="btn btn-primary">Shop Now</a>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+  <%- include('partials/whatsapp') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

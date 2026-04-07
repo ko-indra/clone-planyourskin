@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= description %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <!-- Shop Header -->
+  <section class="page-header">
+    <div class="container">
+      <h1 class="page-title">Shop</h1>
+      <p class="breadcrumb"><a href="/">Home</a> / Shop</p>
+    </div>
+  </section>
+
+  <!-- Shop Content -->
+  <section class="section shop-section">
+    <div class="container">
+      <div class="shop-layout">
+        <!-- Sidebar -->
+        <aside class="shop-sidebar">
+          <div class="sidebar-widget">
+            <h3 class="widget-title">Categories</h3>
+            <ul class="widget-list">
+              <li><a href="/shop" class="<%= !query.category ? 'active' : '' %>">All Products</a></li>
+              <li><a href="/shop?category=moisturizer" class="<%= query.category === 'moisturizer' ? 'active' : '' %>">Moisturizer</a></li>
+              <li><a href="/shop?category=serum" class="<%= query.category === 'serum' ? 'active' : '' %>">Serum</a></li>
+              <li><a href="/shop?category=cleansing" class="<%= query.category === 'cleansing' ? 'active' : '' %>">Cleanser</a></li>
+              <li><a href="/shop?category=sunscreen" class="<%= query.category === 'sunscreen' ? 'active' : '' %>">Sunscreen</a></li>
+            </ul>
+          </div>
+          <div class="sidebar-widget">
+            <h3 class="widget-title">Skin Concern</h3>
+            <ul class="widget-list">
+              <li><a href="/shop?concern=acne">Acne Prone</a></li>
+              <li><a href="/shop?concern=blemish">Blemish</a></li>
+              <li><a href="/shop?concern=pih">PIH</a></li>
+              <li><a href="/shop?concern=pie">PIE</a></li>
+              <li><a href="/shop?concern=pores">Large Pores</a></li>
+              <li><a href="/shop?concern=sensitive">Sensitive Skin</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- Product Grid -->
+        <div class="shop-products">
+          <div class="shop-toolbar">
+            <p class="result-count">Showing <%= products.length %> results</p>
+            <div class="sort-select">
+              <select id="sort-select" onchange="window.location.href='/shop?sort='+this.value">
+                <option value="">Default sorting</option>
+                <option value="price-low" <%= query.sort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+                <option value="price-high" <%= query.sort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+                <option value="name" <%= query.sort === 'name' ? 'selected' : '' %>>Name: A to Z</option>
+              </select>
+            </div>
+          </div>
+          <div class="product-grid">
+            <% products.forEach(product => { %>
+            <div class="product-card" id="product-<%= product.id %>">
+              <a href="/product/<%= product.slug %>" class="product-image-link">
+                <% if (product.discount) { %>
+                <span class="product-badge">-<%= product.discount %>%</span>
+                <% } %>
+                <img src="<%= product.image %>" alt="<%= product.name %>" class="product-img primary-img" loading="lazy">
+                <img src="<%= product.hoverImage %>" alt="<%= product.name %>" class="product-img hover-img" loading="lazy">
+              </a>
+              <div class="product-info">
+                <div class="product-category"><%= product.category.join(', ').toUpperCase() %></div>
+                <h3 class="product-name">
+                  <a href="/product/<%= product.slug %>"><%= product.name %></a>
+                </h3>
+                <div class="product-rating">
+                  <% for(let i = 0; i < 5; i++) { %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="<%= i < product.rating ? '#333' : 'none' %>" stroke="#333" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <% } %>
+                </div>
+                <div class="product-price">
+                  <% if (product.salePrice) { %>
+                  <span class="price-original"><%= formatPrice(product.price) %></span>
+                  <span class="price-sale"><%= formatPrice(product.salePrice) %></span>
+                  <% } else { %>
+                  <span class="price-regular"><%= formatPrice(product.price) %></span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% if (products.length === 0) { %>
+          <div class="no-products">
+            <p>No products found matching your criteria.</p>
+            <a href="/shop" class="btn btn-primary">View All Products</a>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+  <%- include('partials/whatsapp') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

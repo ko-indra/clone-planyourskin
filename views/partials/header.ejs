@@ -1,0 +1,132 @@
+<!-- Announcement Bar -->
+<div class="announcement-bar">
+  <div class="announcement-ticker">
+    <div class="ticker-content">
+      <span>Stop ribet! Raih kulit sehat optimal, Plan Your Skin yang #IntinyaAjaCukup.</span>
+      <span>Stop ribet! Raih kulit sehat optimal, Plan Your Skin yang #IntinyaAjaCukup.</span>
+      <span>Stop ribet! Raih kulit sehat optimal, Plan Your Skin yang #IntinyaAjaCukup.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main Header -->
+<header class="main-header" id="main-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <a href="/">
+        <span class="logo-text">Plan Your Skin.</span>
+      </a>
+    </div>
+    <div class="header-actions">
+      <% if (typeof customer !== 'undefined' && customer) { %>
+        <a href="#" class="header-icon" id="account-logout" aria-label="Log Out" title="Logged in as <%= customer.firstName %>, Click to Log Out">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </a>
+      <% } else { %>
+        <a href="#" class="header-icon" id="account-icon" aria-label="My Account">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+      <% } %>
+      <div class="cart-container has-cart-dropdown">
+        <a href="/cart" class="header-icon cart-icon" id="cart-icon" aria-label="Cart">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count">0</span>
+        </a>
+        <div class="cart-dropdown" id="cart-hover-dropdown">
+          <div class="cart-dropdown-header">
+            <span class="cart-dropdown-item-count" id="cart-hover-count">0 ITEM</span>
+            <a href="/cart" class="cart-dropdown-view-link">VIEW CART</a>
+          </div>
+          <div class="cart-dropdown-items" id="cart-hover-items">
+            <div class="cart-dropdown-empty">Your cart is currently empty.</div>
+          </div>
+          <div class="cart-dropdown-footer" id="cart-hover-footer" style="display: none;">
+            <div class="cart-dropdown-subtotal">
+              <span>SUBTOTAL:</span>
+              <span id="cart-hover-subtotal">Rp0</span>
+            </div>
+            <a href="#" class="btn btn-primary" id="cart-hover-checkout" style="width: 100%; text-align: center; border-radius: 2px;">CHECKOUT</a>
+          </div>
+        </div>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <!-- Navigation -->
+  <nav class="main-nav" id="main-nav">
+    <ul class="nav-list">
+      <li class="nav-item"><a href="/best-seller" class="nav-link <%= currentPage === 'best-seller' ? 'active' : '' %>">BEST SELLER</a></li>
+      <li class="nav-item has-dropdown">
+        <a href="/shop" class="nav-link <%= currentPage === 'shop' ? 'active' : '' %>">SKINCARE</a>
+        <div class="dropdown-menu">
+          <div class="dropdown-section">
+            <h4>Shop All</h4>
+            <ul>
+              <li><a href="/shop">Shop All Essentials Skincare</a></li>
+              <li><a href="/shop?category=cleansing">Cleanser</a></li>
+              <li><a href="/shop?category=serum">Serum</a></li>
+              <li><a href="/shop?category=moisturizer">Moisturizer</a></li>
+              <li><a href="/shop?category=sunscreen">Sunscreen</a></li>
+            </ul>
+          </div>
+          <div class="dropdown-section">
+            <h4>Best Sellers</h4>
+            <ul>
+              <li><a href="/best-seller">Shop All Best Sellers</a></li>
+              <li><a href="/product/all-at-once-water-cream">All At Once Water Cream</a></li>
+              <li><a href="/product/all-at-once-gel-moisturizer">All At Once Gel Moisturizer</a></li>
+              <li><a href="/product/all-night-hpr-retinoate-repair-serum">All Night HPR Retinoate Repair Serum</a></li>
+            </ul>
+          </div>
+          <div class="dropdown-section">
+            <h4>Online Exclusives</h4>
+            <ul>
+              <li><a href="/shop?sort=date">New Arrivals</a></li>
+              <li><a href="/shop?sort=sale">SPECIAL OFFER</a></li>
+            </ul>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <a href="/shop" class="nav-link">BUNDLE & SAVE</a>
+        <div class="dropdown-menu">
+          <div class="dropdown-section">
+            <h4>Shop All</h4>
+            <ul>
+              <li><a href="/shop">Shop All Bundles</a></li>
+              <li><a href="/shop">Skincare Bundles</a></li>
+            </ul>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <a href="/shop" class="nav-link">SHOP BY CONCERN</a>
+        <div class="dropdown-menu">
+          <div class="dropdown-section">
+            <h4>Skin Concern</h4>
+            <ul>
+              <li><a href="/shop?concern=acne">Acne Prone</a></li>
+              <li><a href="/shop?concern=blemish">Blemish</a></li>
+              <li><a href="/shop?concern=pih">PIH</a></li>
+              <li><a href="/shop?concern=pie">PIE</a></li>
+              <li><a href="/shop?concern=pores">Large Pores</a></li>
+              <li><a href="/shop?concern=sensitive">Sensitive Skin</a></li>
+            </ul>
+          </div>
+          <div class="dropdown-section">
+            <h4>Shop By Ingredients</h4>
+            <ul>
+              <li><a href="/shop?category=sunscreen">Niacinamide</a></li>
+              <li><a href="/shop?category=serum">HPR Retinoate</a></li>
+              <li><a href="/shop?category=cleansing">Glycerin</a></li>
+              <li><a href="/shop?category=moisturizer">Hydration Complex</a></li>
+            </ul>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item"><a href="/about-us" class="nav-link <%= currentPage === 'about' ? 'active' : '' %>">ABOUT US</a></li>
+    </ul>
+  </nav>
+</header>

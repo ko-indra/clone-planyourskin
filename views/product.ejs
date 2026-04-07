@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= description %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <!-- Product Detail -->
+  <section class="section product-detail-section">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> / <a href="/shop">Shop</a> / <%= product.name %></p>
+      <div class="product-detail-grid">
+        <div class="product-gallery">
+          <div class="gallery-main">
+            <img src="<%= product.image %>" alt="<%= product.name %>" id="gallery-main-img">
+          </div>
+          <div class="gallery-thumbs">
+            <button class="thumb active" onclick="changeImage('<%= product.image %>', this)">
+              <img src="<%= product.image %>" alt="<%= product.name %>">
+            </button>
+            <button class="thumb" onclick="changeImage('<%= product.hoverImage %>', this)">
+              <img src="<%= product.hoverImage %>" alt="<%= product.name %> texture">
+            </button>
+          </div>
+        </div>
+        <div class="product-detail-info">
+          <div class="product-category-label"><%= product.category.join(', ').toUpperCase() %></div>
+          <h1 class="product-detail-name"><%= product.name %></h1>
+          <div class="product-rating">
+            <% for(let i = 0; i < 5; i++) { %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="<%= i < product.rating ? '#333' : 'none' %>" stroke="#333" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <% } %>
+          </div>
+          <div class="product-detail-price">
+            <% if (product.salePrice) { %>
+            <span class="price-original"><%= formatPrice(product.price) %></span>
+            <span class="price-sale"><%= formatPrice(product.salePrice) %></span>
+            <% if (product.discount) { %>
+            <span class="price-discount">-<%= product.discount %>%</span>
+            <% } %>
+            <% } else { %>
+            <span class="price-regular"><%= formatPrice(product.price) %></span>
+            <% } %>
+          </div>
+          <p class="product-description"><%= product.description %></p>
+          
+          <div class="product-meta">
+            <% if (product.concerns && product.concerns.length > 0) { %>
+            <div class="meta-row">
+              <span class="meta-label">Skin Concern:</span>
+              <span class="meta-value"><%= product.concerns.join(', ') %></span>
+            </div>
+            <% } %>
+            <% if (product.ingredients && product.ingredients.length > 0) { %>
+            <div class="meta-row">
+              <span class="meta-label">Key Ingredients:</span>
+              <span class="meta-value"><%= product.ingredients.join(', ') %></span>
+            </div>
+            <% } %>
+          </div>
+
+          <div class="product-actions">
+            <div class="quantity-selector">
+              <button class="qty-btn" onclick="updateQty(-1)">-</button>
+              <input type="number" id="product-qty" value="1" min="1" max="10">
+              <button class="qty-btn" onclick="updateQty(1)">+</button>
+            </div>
+            <button class="btn btn-primary btn-add-to-cart" id="add-to-cart"
+              data-variant-id="<%= product.shopifyVariantId %>"
+              data-product-name="<%= product.name %>">
+              ADD TO CART
+            </button>
+          </div>
+
+          <div class="trust-icons-inline">
+            <span>✓ Non-Comedogenic</span>
+            <span>✓ Dermatologically Tested</span>
+            <span>✓ Halal Certified</span>
+            <span>✓ BPOM Certified</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cart Notification -->
+  <div class="cart-notification" id="cart-notification">
+    <div class="cart-notification-content">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span id="cart-notification-text">Product added to cart!</span>
+    </div>
+    <a href="#" id="cart-notification-checkout" class="btn btn-primary btn-sm">CHECKOUT</a>
+  </div>
+
+  <!-- Related Products -->
+  <% if (relatedProducts.length > 0) { %>
+  <section class="section related-products-section">
+    <div class="container">
+      <h2 class="section-title">You May Also Like</h2>
+      <div class="product-grid">
+        <% relatedProducts.forEach(p => { %>
+        <div class="product-card">
+          <a href="/product/<%= p.slug %>" class="product-image-link">
+            <% if (p.discount) { %>
+            <span class="product-badge">-<%= p.discount %>%</span>
+            <% } %>
+            <img src="<%= p.image %>" alt="<%= p.name %>" class="product-img primary-img" loading="lazy">
+            <img src="<%= p.hoverImage %>" alt="<%= p.name %>" class="product-img hover-img" loading="lazy">
+          </a>
+          <div class="product-info">
+            <div class="product-category"><%= p.category.join(', ').toUpperCase() %></div>
+            <h3 class="product-name"><a href="/product/<%= p.slug %>"><%= p.name %></a></h3>
+            <div class="product-price">
+              <% if (p.salePrice) { %>
+              <span class="price-original"><%= formatPrice(p.price) %></span>
+              <span class="price-sale"><%= formatPrice(p.salePrice) %></span>
+              <% } else { %>
+              <span class="price-regular"><%= formatPrice(p.price) %></span>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <%- include('partials/footer') %>
+  <%- include('partials/whatsapp') %>
+  <script src="/js/main.js"></script>
+  <script>
+    function changeImage(src, thumb) {
+      document.getElementById('gallery-main-img').src = src;
+      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+    }
+    function updateQty(delta) {
+      const input = document.getElementById('product-qty');
+      let val = parseInt(input.value) + delta;
+      if (val < 1) val = 1;
+      if (val > 10) val = 10;
+      input.value = val;
+    }
+  </script>
+</body>
+</html>
+
