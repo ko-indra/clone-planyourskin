@@ -97,9 +97,25 @@ async function main() {
     ['/shop/', 'shop/index.html'],
     ['/best-seller/', 'best-seller/index.html'],
     ['/about-us/', 'about-us/index.html'],
-    ['/product-category/skincare/', 'product-category/skincare/index.html'],
+    ['/faq/', 'faq/index.html'],
+    ['/refund-policy/', 'refund-policy/index.html'],
+    ['/terms-and-conditions/', 'terms-and-conditions/index.html'],
+    ['/ingredient-library/', 'ingredient-library/index.html'],
+    ['/checkout/', 'checkout/index.html'],
     ['/my-account/', 'my-account/index.html'],
     ['/cart/', 'cart/index.html'],
+    // Product categories
+    ['/product-category/skincare/', 'product-category/skincare/index.html'],
+    ['/product-category/moisturizer/', 'product-category/moisturizer/index.html'],
+    ['/product-category/cleansing-serum/', 'product-category/cleansing-serum/index.html'],
+    ['/product-category/hpr-serum/', 'product-category/hpr-serum/index.html'],
+    ['/product-category/spf/', 'product-category/spf/index.html'],
+    ['/product-category/skincare/moisturizer/', 'product-category/skincare/moisturizer/index.html'],
+    ['/product-category/skincare/cleansing-serum/', 'product-category/skincare/cleansing-serum/index.html'],
+    ['/product-category/skincare/serums/', 'product-category/skincare/serums/index.html'],
+    ['/product-category/skincare/sunscreen/', 'product-category/skincare/sunscreen/index.html'],
+    // Brand
+    ['/brand/plan-your-skin/', 'brand/plan-your-skin/index.html'],
   ];
 
   console.log('── Cloning pages ──────────────────────');
