@@ -1,28 +1,26 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
-const cheerio = require('cheerio');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Shopify credentials (from environment variables, .trim() to handle newline from CLI piping)
+// Shopify credentials
 const SHOPIFY_STORE = (process.env.SHOPIFY_STORE || 'planyourskin.myshopify.com').trim();
 const SHOPIFY_API_KEY = (process.env.SHOPIFY_API_KEY || '').trim();
 const API_VERSION = '2024-01';
 
-// Original site
-const ORIGIN = 'https://planyourskin.com';
+// ─── Static files ONLY (100% local, NO proxy) ─────────────────
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1h',
+  extensions: ['html'],  // allows /best-seller to match /best-seller/index.html
+}));
 
-// Static files (must be before proxy)
-app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
-app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
-
-// ─── Product Cache ─────────────────────────────────
+// ─── Product Cache ─────────────────────────────────────────────
 let productCache = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 async function fetchShopifyProducts() {
   const now = Date.now();
@@ -43,10 +41,10 @@ async function fetchShopifyProducts() {
     const data = await response.json();
     productCache = data.products;
     cacheTimestamp = now;
-    console.log(`[Cache] Loaded ${productCache.length} products from Shopify`);
+    console.log(`[Shopify] Loaded ${productCache.length} products`);
     return productCache;
   } catch (error) {
-    console.error('Error fetching products:', error.message);
+    console.error('[Shopify] Error:', error.message);
     return productCache || [];
   }
 }
@@ -72,7 +70,7 @@ function transformProduct(p) {
   };
 }
 
-// ─── API Routes ────────────────────────────────────
+// ─── Shopify API Routes ────────────────────────────────────────
 app.get('/api/products', async (req, res) => {
   try {
     const products = await fetchShopifyProducts();
@@ -93,194 +91,50 @@ app.get('/api/products/:handle', async (req, res) => {
   }
 });
 
-// ─── Reverse Proxy ─────────────────────────────────
-app.use(async (req, res) => {
-  const targetUrl = ORIGIN + req.originalUrl;
+// ─── SPA-style fallback: serve index.html for directory paths ──
+// This handles /best-seller, /about-us, /shop/?filter=... etc.
+app.use((req, res, next) => {
+  // Only for non-asset, non-API GET requests
+  if (req.method !== 'GET') return next();
+  if (req.path.startsWith('/api/')) return next();
+  if (req.path.match(/\.(css|js|png|jpe?g|gif|webp|svg|woff2?|ttf|eot|ico|map)$/i)) return next();
 
-  try {
-    // Forward the request to the original site
-    const headers = {
-      'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0',
-      'Accept': req.headers['accept'] || '*/*',
-      'Accept-Language': req.headers['accept-language'] || 'en-US,en;q=0.9',
-      'Referer': ORIGIN + '/',
-    };
+  // Try to find an index.html in the requested path
+  const tryPaths = [
+    path.join(__dirname, 'public', req.path, 'index.html'),
+    path.join(__dirname, 'public', req.path + '.html'),
+  ];
 
-    // Forward cookies if any
-    if (req.headers.cookie) {
-      headers['Cookie'] = req.headers.cookie;
+  for (const p of tryPaths) {
+    if (require('fs').existsSync(p)) {
+      return res.sendFile(p);
     }
-
-    const response = await fetch(targetUrl, {
-      headers,
-      redirect: 'follow',
-      compress: true,
-    });
-
-    // Copy response headers
-    const contentType = response.headers.get('content-type') || '';
-    res.status(response.status);
-
-    // Forward relevant headers
-    const headersToForward = [
-      'content-type', 'cache-control', 'set-cookie', 'vary',
-      'x-content-type-options', 'last-modified', 'etag',
-    ];
-    headersToForward.forEach(h => {
-      const val = response.headers.get(h);
-      if (val) res.setHeader(h, val);
-    });
-
-    // For HTML pages: rewrite links and inject our script
-    if (contentType.includes('text/html')) {
-      const html = await response.text();
-      const $ = cheerio.load(html, { decodeEntities: false });
-
-      // Helper: rewrite any planyourskin.com URL (absolute, protocol-relative) to relative
-      const rewriteUrl = (url) => {
-        if (!url) return url;
-        return url.replace(/(https?:)?\/\/(www\.)?planyourskin\.com/g, '') || '/';
-      };
-
-      // 1. Rewrite all absolute links to planyourskin.com → relative
-      $('a[href]').each((_, el) => {
-        const href = $(el).attr('href');
-        if (href && href.includes('planyourskin.com')) {
-          $(el).attr('href', rewriteUrl(href));
-        }
-      });
-
-      // 2. Rewrite form actions
-      $('form[action]').each((_, el) => {
-        const action = $(el).attr('action');
-        if (action && action.includes('planyourskin.com')) {
-          $(el).attr('action', rewriteUrl(action));
-        }
-      });
-
-      // 2b. Rewrite ALL src/href/srcset/data-src attributes with planyourskin.com URLs
-      $('[src], [href], [data-src], [data-lazy-src]').each((_, el) => {
-        ['src', 'href', 'data-src', 'data-lazy-src'].forEach(attr => {
-          const val = $(el).attr(attr);
-          if (val && val.includes('planyourskin.com')) {
-            $(el).attr(attr, rewriteUrl(val));
-          }
-        });
-      });
-
-      // 2c. Rewrite srcset attributes
-      $('[srcset]').each((_, el) => {
-        const srcset = $(el).attr('srcset');
-        if (srcset && srcset.includes('planyourskin.com')) {
-          $(el).attr('srcset', srcset.replace(/(https?:)?\/\/(www\.)?planyourskin\.com/g, ''));
-        }
-      });
-
-      // 3. Inject Shopify config and our injector script before </body>
-      const injectionHTML = `
-<!-- Shopify Injector -->
-<script>
-  window.__SHOPIFY_CONFIG__ = {
-    storeUrl: 'https://${SHOPIFY_STORE}',
-    storeDomain: '${SHOPIFY_STORE}',
-  };
-</script>
-<script src="/js/shopify-injector.js"></script>
-`;
-      if ($('body').length) {
-        $('body').append(injectionHTML);
-      }
-
-      // 4. Remove WooCommerce cart/checkout AJAX scripts that would conflict
-      // (We want to keep the visual elements but hijack the behavior)
-      $('script').each((_, el) => {
-        const src = $(el).attr('src') || '';
-        const content = $(el).html() || '';
-        // Block WooCommerce AJAX cart handlers
-        if (src.includes('add-to-cart') && src.includes('.min.js')) {
-          $(el).remove();
-        }
-        // Block WooCommerce cart fragments
-        if (src.includes('cart-fragments')) {
-          $(el).remove();
-        }
-      });
-      // 5. Rewrite inline <style> blocks that may contain absolute font/image URLs
-      $('style').each((_, el) => {
-        let styleContent = $(el).html();
-        if (styleContent && styleContent.includes('planyourskin.com')) {
-          styleContent = styleContent.replace(/(https?:)?\/\/(www\.)?planyourskin\.com/g, '');
-          $(el).html(styleContent);
-        }
-      });
-
-      // 6. Rewrite ALL link tags (stylesheets, preloads, etc.)
-      $('link[href]').each((_, el) => {
-        const href = $(el).attr('href');
-        if (href && href.includes('planyourskin.com')) {
-          $(el).attr('href', rewriteUrl(href));
-        }
-      });
-
-      // 7. Rewrite inline scripts that may contain absolute URLs
-      $('script').each((_, el) => {
-        const src = $(el).attr('src');
-        if (src && src.includes('planyourskin.com')) {
-          $(el).attr('src', rewriteUrl(src));
-        }
-        // Also rewrite inline script content
-        let content = $(el).html();
-        if (content && content.includes('planyourskin.com')) {
-          content = content.replace(/(https?:)?\/\/(www\.)?planyourskin\.com/g, '');
-          $(el).html(content);
-        }
-      });
-
-      const modifiedHtml = $.html();
-      res.removeHeader('content-length');
-      res.send(modifiedHtml);
-
-    } else if (contentType.includes('text/css')) {
-      // For CSS: rewrite absolute planyourskin.com URLs to relative (so they go through our proxy)
-      let css = await response.text();
-      // Convert absolute + protocol-relative URLs → relative so fonts/images load through proxy
-      css = css.replace(/(https?:)?\/\/(www\.)?planyourskin\.com/g, '');
-      res.removeHeader('content-length');
-      res.send(css);
-
-    } else if (
-      contentType.includes('font') ||
-      req.originalUrl.match(/\.(woff2?|ttf|eot|otf)(\?|$)/i)
-    ) {
-      // For fonts: add CORS headers and serve
-      const buffer = await response.buffer();
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET');
-      if (!res.getHeader('content-type')) {
-        if (req.originalUrl.includes('.woff2')) res.setHeader('content-type', 'font/woff2');
-        else if (req.originalUrl.includes('.woff')) res.setHeader('content-type', 'font/woff');
-        else if (req.originalUrl.includes('.ttf')) res.setHeader('content-type', 'font/ttf');
-        else if (req.originalUrl.includes('.eot')) res.setHeader('content-type', 'application/vnd.ms-fontobject');
-      }
-      res.send(buffer);
-
-    } else {
-      // For all other resources (images, JS, etc.): stream as-is
-      const buffer = await response.buffer();
-      res.send(buffer);
-    }
-
-  } catch (error) {
-    console.error(`[Proxy Error] ${req.originalUrl}:`, error.message);
-    res.status(502).send(`Proxy Error: ${error.message}`);
   }
+
+  // If nothing found, serve 404
+  res.status(404).send(`
+    <!DOCTYPE html>
+    <html><head><title>Page Not Found - Plan Your Skin</title>
+    <style>
+      body { font-family: 'Poppins', sans-serif; text-align: center; padding: 80px 20px; background: #fff; color: #333; }
+      h1 { font-size: 4em; margin-bottom: 0; color: #222529; }
+      p { font-size: 1.2em; color: #777; }
+      a { color: #b93027; text-decoration: none; font-weight: 600; }
+      a:hover { text-decoration: underline; }
+    </style></head>
+    <body>
+      <h1>404</h1>
+      <p>Halaman tidak ditemukan.</p>
+      <p><a href="/">← Kembali ke Beranda</a> | <a href="/shop/">Lihat Produk</a></p>
+    </body></html>
+  `);
 });
 
-// ─── Start (only when running directly, not on Vercel) ─────────
+// ─── Start ─────────────────────────────────────────────────────
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
-    console.log(`\n🌿 PlanYourSkin Clone running at http://localhost:${PORT}`);
-    console.log(`   Proxied: ${ORIGIN}`);
+    console.log(`\n🌿 PlanYourSkin running at http://localhost:${PORT}`);
+    console.log(`   Mode: 100% Static (NO proxy to planyourskin.com)`);
     console.log(`   Shopify: ${SHOPIFY_STORE}\n`);
 
     // Pre-warm product cache

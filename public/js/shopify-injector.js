@@ -362,12 +362,33 @@
     console.log('[Shopify Injector] Initializing...');
 
     try {
-      // 1. Fetch products from our API
-      const response = await fetch('/api/products');
-      const data = await response.json();
-      shopifyProducts = data.products || [];
+      // 1. Fetch products from our API (with LocalStorage Cache)
+      const CACHE_KEY = 'shopify_products_cache';
+      const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+      const cached = localStorage.getItem(CACHE_KEY);
+      
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.timestamp < CACHE_TTL_MS) {
+            shopifyProducts = parsed.data || [];
+            console.log(`[Shopify Injector] Loaded ${shopifyProducts.length} products from CACHE`);
+          }
+        } catch (e) {
+          console.warn('[Shopify Injector] Cache parse error, refetching...');
+        }
+      }
 
-      console.log(`[Shopify Injector] Loaded ${shopifyProducts.length} products`);
+      if (!shopifyProducts.length) {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        shopifyProducts = data.products || [];
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          timestamp: Date.now(),
+          data: shopifyProducts
+        }));
+        console.log(`[Shopify Injector] Loaded ${shopifyProducts.length} products from API`);
+      }
 
       // 2. Build product map for fast title lookup
       shopifyProducts.forEach(p => {

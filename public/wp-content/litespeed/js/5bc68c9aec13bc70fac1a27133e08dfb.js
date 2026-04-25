@@ -1,0 +1,4 @@
+(function($){epekenLoadReferenceData(PT_Ajax_Init_Fast_Mode_Co.urlprov,'epeken_province');epekenLoadReferenceData(PT_Ajax_Init_Fast_Mode_Co.urlkotakecamatan,'epeken_kotakecamatan');epekenLoadReferenceData(PT_Ajax_Init_Fast_Mode_Co.urlkotakabupaten,'epeken_kotakabupaten');function epekenLoadReferenceData(your_url,data_label){$.ajax({url:your_url,method:'GET',dataType:'json',success:function(data){var check=localStorage.getItem(data_label);if(check==undefined||check==null)
+epekenSaveDataToStorage(data,data_label);},error:function(jqXHR,textStatus,errorThrown){console.error('Error downloading checkout reference data',textStatus,errorThrown)}})}
+function epekenSaveDataToStorage(data,data_label){try{const dataToStore=typeof data==='object'?JSON.stringify(data):data;localStorage.setItem(data_label,dataToStore);console.log('Data saved to localStorage.')}catch(e){console.error('Error saving data to storage:',e)}}})(jQuery)
+;
