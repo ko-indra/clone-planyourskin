@@ -5,3 +5,6 @@ env.txt
 package-lock.json
 
 .vercel
+.claude
+shopify-backup-*.json
+sync-data.json

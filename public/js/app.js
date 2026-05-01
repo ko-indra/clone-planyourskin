@@ -11,6 +11,10 @@ function formatPrice(price) {
 
 // Create product card HTML
 function createProductCard(product) {
+  if (window.PYSProductCard) {
+    return window.PYSProductCard.render(product);
+  }
+
   const mainImg = product.image || product.images?.[0]?.src || '';
   const hoverImg = product.images?.[1]?.src || '';
   const isBestSeller = (product.tags || '').toLowerCase().includes('best seller');
@@ -33,7 +37,7 @@ function createProductCard(product) {
           <img class="product-img-main" src="${mainImg}" alt="${product.title}" loading="lazy">
           ${hoverImg ? `<img class="product-img-hover" src="${hoverImg}" alt="${product.title}" loading="lazy">` : ''}
           <div class="product-card-actions">
-            <span class="btn-add-cart" onclick="event.preventDefault(); event.stopPropagation();">Add to Cart</span>
+            <span class="btn-add-cart" onclick="event.preventDefault(); event.stopPropagation(); addToCartFromCard('${product.handle}');">Add to Cart</span>
             <button class="btn-wishlist" onclick="event.preventDefault(); event.stopPropagation();">♡</button>
           </div>
         </div>
@@ -50,12 +54,29 @@ function createProductCard(product) {
   `;
 }
 
+// Add to cart from product card (quick add)
+let _productsCache = null;
+async function addToCartFromCard(handle) {
+  try {
+    if (!_productsCache) {
+      _productsCache = await fetchProducts();
+    }
+    const product = _productsCache.find(p => p.handle === handle);
+    if (product && typeof PYSCart !== 'undefined') {
+      PYSCart.addItem(product, 1);
+    }
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+  }
+}
+
 // Fetch products from API
 async function fetchProducts() {
   try {
     const response = await fetch('/api/products');
     const data = await response.json();
-    return data.products || [];
+    _productsCache = data.products || [];
+    return _productsCache;
   } catch (error) {
     console.error('Error fetching products:', error);
     return [];
@@ -194,11 +215,72 @@ async function renderBundles() {
   grid.innerHTML = bundles.map(p => createProductCard(p)).join('');
 }
 
+// ─── Intercept legacy WooCommerce "Add to Cart" buttons ───────
+// Static pages (shop/, product-category/) have old-style links like
+// href="/shop/?add-to-cart=133". This interceptor catches them and
+// routes through our local PYSCart instead.
+function initLegacyCartInterceptor() {
+  document.addEventListener('click', async (e) => {
+    // Find the closest <a> with add_to_cart_button class or ?add-to-cart= in href
+    const link = e.target.closest('a.add_to_cart_button, a[href*="add-to-cart"]');
+    if (!link) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Extract product title from aria-label (format: 'Add to cart: "Product Name"')
+    const ariaLabel = link.getAttribute('aria-label') || '';
+    const titleMatch = ariaLabel.match(/["""]([^"""]+)["""]/);
+    const productTitle = titleMatch ? titleMatch[1] : '';
+
+    if (!productTitle) {
+      console.warn('[Cart Interceptor] Could not extract product title from:', ariaLabel);
+      return;
+    }
+
+    // Visual feedback
+    const originalHTML = link.innerHTML;
+    link.innerHTML = '<i class="porto-icon-shopping-cart"></i>Adding...';
+    link.style.pointerEvents = 'none';
+
+    try {
+      // Fetch products from Shopify API if not cached
+      if (!_productsCache) {
+        _productsCache = await fetchProducts();
+      }
+
+      // Find product by title (case-insensitive match)
+      const product = _productsCache.find(p =>
+        p.title.toLowerCase() === productTitle.toLowerCase()
+      );
+
+      if (product && typeof PYSCart !== 'undefined') {
+        PYSCart.addItem(product, 1);
+        link.innerHTML = '<i class="porto-icon-shopping-cart"></i>✓ Added!';
+        setTimeout(() => {
+          link.innerHTML = originalHTML;
+          link.style.pointerEvents = '';
+        }, 1500);
+      } else {
+        console.warn('[Cart Interceptor] Product not found:', productTitle);
+        // Fallback: navigate to product page
+        const handle = productTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        window.location.href = '/product/' + handle;
+      }
+    } catch (error) {
+      console.error('[Cart Interceptor] Error:', error);
+      link.innerHTML = originalHTML;
+      link.style.pointerEvents = '';
+    }
+  });
+}
+
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
   initHeroSlider();
   initHeaderScroll();
   initMobileMenu();
+  initLegacyCartInterceptor();
   
   // Render homepage sections
   renderBestSellers();

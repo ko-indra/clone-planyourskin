@@ -1,0 +1,183 @@
+.pys-product-card-shell {
+  margin-bottom: var(--porto-el-spacing, var(--porto-grid-gutter-width, 20px));
+}
+
+.pys-product-card-shell .product-image {
+  border: 1px solid #f4f4f4;
+}
+
+.pys-product-card-shell .img-thumbnail {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.pys-product-card-shell .img-responsive {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pys-product-card-shell .hover-image {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.pys-product-card-shell .tb-image-type-hover:hover .hover-image {
+  opacity: 1;
+}
+
+.pys-product-card-shell .labels {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+}
+
+.pys-product-card-shell .onsale {
+  background: var(--porto-sale-color, #e27c7c);
+  color: var(--porto-sale-color-inverse, #fff);
+  display: inline-block;
+  font-family: Poppins, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  min-width: 48px;
+  padding: 5px 9px;
+  text-align: center;
+}
+
+.pys-product-card-shell .product-content {
+  padding-top: 52px;
+}
+
+.pys-product-card-shell .tb-meta-product_cat,
+.pys-product-card-shell .tb-meta-product_cat a {
+  color: #777;
+  font-family: Poppins, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 25px;
+}
+
+.pys-product-card-shell .post-title {
+  margin: 0;
+}
+
+.pys-product-card-shell .post-title,
+.pys-product-card-shell .post-title a {
+  color: #222529;
+  font-family: Poppins, sans-serif;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: normal;
+  text-decoration: none;
+}
+
+.pys-product-card-shell .porto-tb-woo-rating {
+  min-height: 20px;
+  margin-top: .55rem;
+}
+
+.pys-product-card-shell .star-rating {
+  display: inline-block;
+  position: relative;
+  width: 5.4em;
+  height: 1em;
+  overflow: hidden;
+  color: #d6d6d6;
+  font-family: star, WooCommerce, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.pys-product-card-shell .star-rating::before {
+  content: "\2605\2605\2605\2605\2605";
+  letter-spacing: .08em;
+}
+
+.pys-product-card-shell .star-rating span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  height: 1em;
+  color: #ffc600;
+  white-space: nowrap;
+}
+
+.pys-product-card-shell .star-rating span::before {
+  content: "\2605\2605\2605\2605\2605";
+  letter-spacing: .08em;
+}
+
+.pys-product-card-shell .star-rating strong {
+  display: none;
+}
+
+.pys-product-card-shell .tb-woo-price {
+  margin-top: 16px;
+}
+
+.pys-product-card-shell .price {
+  color: var(--porto-color-price, #444);
+  display: block;
+  font-family: Poppins, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.pys-product-card-shell .price del {
+  color: #999;
+  display: block;
+  font-size: clamp(24px, 2vw, 30px);
+  font-weight: 400;
+  line-height: 1;
+  opacity: 1;
+  text-decoration: line-through;
+}
+
+.pys-product-card-shell .price ins {
+  display: block;
+  color: #444;
+  font-size: clamp(30px, 2.8vw, 38px);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-top: .15rem;
+  text-decoration: none;
+}
+
+.pys-product-card-shell .tb-hover-content {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.pys-product-card-shell .porto-tb-link {
+  position: absolute;
+  inset: 0;
+}
+
+.pys-product-card-shell .porto-tb-addcart {
+  pointer-events: auto;
+}
+
+@media (max-width: 575px) {
+  .pys-product-card-shell .post-title,
+  .pys-product-card-shell .post-title a {
+    font-size: 23.2143px;
+    line-height: 28.16px;
+  }
+
+  .pys-product-card-shell .product-content {
+    padding-top: 28px;
+  }
+}

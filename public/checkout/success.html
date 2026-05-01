@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pembayaran Berhasil - Plan Your Skin</title>
+  <link rel="shortcut icon" href="/wp-content/uploads/2025/05/logo_plan_your_skin_square.webp" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: #f9f9f9; color: #555; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
+    .success-card { background: #fff; border-radius: 12px; padding: 50px 40px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08); max-width: 500px; width: 100%; }
+    .success-icon { font-size: 60px; margin-bottom: 15px; }
+    h1 { font-family: 'Playfair Display', serif; font-size: 1.8em; color: #222; margin: 0 0 10px; }
+    p { font-size: 14px; line-height: 1.6; margin: 0 0 8px; }
+    .order-id { display: inline-block; background: #f0f0f0; padding: 6px 16px; border-radius: 20px; font-weight: 600; color: #222; margin: 12px 0 20px; font-size: 13px; }
+    .btn-home { display: inline-block; padding: 14px 32px; background: #222; color: #fff; font-weight: 600; font-size: 13px; text-transform: uppercase; text-decoration: none; border-radius: 6px; margin-top: 10px; transition: background 0.3s; }
+    .btn-home:hover { background: #444; }
+  </style>
+</head>
+<body>
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <h1>Pembayaran Berhasil!</h1>
+    <p>Terima kasih telah berbelanja di Plan Your Skin.</p>
+    <p>Pesanan kamu sedang diproses.</p>
+    <div class="order-id" id="orderId">Loading...</div>
+    <p style="font-size:12px;color:#999;margin-top:5px;">Konfirmasi pesanan telah dikirim ke email kamu.</p>
+    <a href="/" class="btn-home">KEMBALI KE BERANDA</a>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('order_id');
+    if (orderId) {
+      document.getElementById('orderId').textContent = 'Order ID: ' + orderId;
+    } else {
+      document.getElementById('orderId').textContent = 'Pesanan sedang diproses';
+    }
+  </script>
+</body>
+</html>
